@@ -1,0 +1,41 @@
+-- Roblox Lua script to auto-steal brainrots in 'Steal a Brainrot'
+
+-- Load the necessary services
+local Players = game:GetService('Players')
+local Workspace = game:GetService('Workspace')
+local UserInputService = game:GetService('UserInputService')
+
+-- Get the player
+local player = Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+
+-- Function to find and steal a brainrot
+local function stealBrainrot()
+    -- Iterate through the workspace for brainrots
+    for _, item in pairs(Workspace:GetChildren()) do
+        if item:IsA('Model') and item.Name == 'Brainrot' and item:FindFirstChild('TouchInterest') then
+            -- If the brainrot is found, move to it
+            character:SetPrimaryPartCFrame(item.PrimaryPart.CFrame)
+            wait(0.1) -- Wait for a bit to prevent spamming
+            
+            -- Simulate the interaction to steal the brainrot
+            fireclickdetector(item.PrimaryPart.ClickDetector)
+            wait(0.5) -- Wait to ensure the interaction completes
+            print('Stole a brainrot!')
+        end
+    end
+end
+
+-- Main loop to continuously search for brainrots
+while true do
+    stealBrainrot()
+    wait(1) -- Wait before checking again to avoid overwhelming the server
+end
+
+-- Listen for specific key to stop the script, just for safety
+UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
+    if input.KeyCode == Enum.KeyCode.Q then -- Press Q to stop the script
+        print('Stopping the auto-steal script!')
+        return -- Exit the loop gracefully
+    end
+end)
